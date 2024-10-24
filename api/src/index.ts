@@ -1,5 +1,6 @@
 import express, { json, urlencoded } from 'express';
 import productRoutes from './routes/products/index';
+import authRoutes from './routes/auth/index';
 
 const app = express();
 
@@ -17,3 +18,4 @@ app.get('/', (req, res) => {
 });
 
 app.use('/products', productRoutes);
+app.use('/auth', authRoutes);
