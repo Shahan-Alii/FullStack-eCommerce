@@ -1,6 +1,6 @@
 import express, { json, urlencoded } from 'express';
-import productRoutes from './routes/products/index';
-import authRoutes from './routes/auth/index';
+import productRoutes from './routes/products/index.js';
+import authRoutes from './routes/auth/index.js';
 
 const app = express();
 
