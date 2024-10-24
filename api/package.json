@@ -10,8 +10,6 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
- 
-
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +23,7 @@
     "loadash": "^1.0.0",
     "lodash": "^4.17.21",
     "pg": "^8.13.0",
+    "serverless-http": "^3.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
