@@ -15,6 +15,13 @@
       "when": 1729709195447,
       "tag": "0001_bored_luckman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729836706819,
+      "tag": "0002_slimy_rachel_grey",
+      "breakpoints": true
     }
   ]
 }

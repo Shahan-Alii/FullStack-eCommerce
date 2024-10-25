@@ -1,6 +1,8 @@
 import express, { json, urlencoded } from 'express';
 import productRoutes from './routes/products/index.js';
 import authRoutes from './routes/auth/index.js';
+import orderRoutes from './routes/orders/index.js';
+
 import serverless from 'serverless-http';
 
 const app = express();
@@ -22,5 +24,6 @@ app.get('/', (req, res) => {
 
 app.use('/products', productRoutes);
 app.use('/auth', authRoutes);
+app.use('/orders', orderRoutes);
 
 export const handler = serverless(app);
