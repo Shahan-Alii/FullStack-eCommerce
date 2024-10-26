@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -29,6 +29,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { defaultStyles } from '@/constants/styles';
 import { fetchProductById } from '@/api/products';
 import { useQuery } from '@tanstack/react-query';
+import useCart from '@/store/cartStore';
 
 const ProductsDetailsScreen = () => {
     const { id } = useLocalSearchParams();
@@ -87,6 +88,14 @@ const ProductsDetailsScreen = () => {
         queryFn: () => fetchProductById(Number(id)),
     });
 
+    const addToCart = useCart((state: any) => state.addProduct);
+    const cart = useCart((state: any) => state.items);
+
+    const handleAddToCart = () => {
+        addToCart({ ...product, quantity });
+
+        // console.log(cart);
+    };
     {
         /* error handling */
     }
@@ -115,7 +124,6 @@ const ProductsDetailsScreen = () => {
                 }}
             >
                 <Text style={{ fontSize: hp(10), fontFamily: 'mon-med' }}>
-                    {' '}
                     Error fetching data
                 </Text>
             </View>
@@ -192,7 +200,10 @@ const ProductsDetailsScreen = () => {
                             <Text style={styles.textIcon}>+</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={defaultStyles.btn}>
+                    <TouchableOpacity
+                        style={defaultStyles.btn}
+                        onPress={handleAddToCart}
+                    >
                         <Text style={defaultStyles.btnText}>Add to Cart</Text>
                     </TouchableOpacity>
                 </View>
