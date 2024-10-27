@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Colors from '@/constants/Colors';
 
 export default function RootLayout() {
     const queryClient = new QueryClient();
@@ -19,20 +20,46 @@ export default function RootLayout() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack screenOptions={{}}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
                 <Stack.Screen
                     name="(modals)/login"
                     options={{
                         presentation: 'modal',
-                        title: 'Log in or sign up',
+                        headerTransparent: true,
+                        title: '',
+                        headerTitleStyle: {
+                            fontFamily: 'mon-med',
+                        },
+                        headerLeft: () => (
+                            <TouchableOpacity onPress={() => router.back()}>
+                                <Ionicons
+                                    name="close-outline"
+                                    size={28}
+                                    color={Colors.primary}
+                                />
+                            </TouchableOpacity>
+                        ),
+                    }}
+                />
+
+                <Stack.Screen
+                    name="(modals)/signup"
+                    options={{
+                        headerTransparent: true,
+                        presentation: 'modal',
+                        title: '',
                         headerTitleStyle: {
                             fontFamily: 'mon-sb',
                         },
                         headerLeft: () => (
                             <TouchableOpacity onPress={() => router.back()}>
-                                <Ionicons name="close-outline" size={28} />
+                                <Ionicons
+                                    name="close-outline"
+                                    size={28}
+                                    color={Colors.primary}
+                                />
                             </TouchableOpacity>
                         ),
                     }}

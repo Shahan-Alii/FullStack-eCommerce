@@ -6,8 +6,11 @@ import {
 } from 'react-native-responsive-screen';
 import Colors from '@/constants/Colors';
 import { Link } from 'expo-router';
+import useCart from '@/store/cartStore';
 
 export default function ProductCard({ product }: any) {
+    const addToCart = useCart((state: any) => state.addProduct);
+
     return (
         <Link href={`/products/${product.id}`} asChild>
             <TouchableOpacity style={styles.container}>
@@ -29,7 +32,12 @@ export default function ProductCard({ product }: any) {
 
                     <Text style={styles.price}>{product.price} $</Text>
 
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => {
+                            addToCart({ ...product, quantity: 1 });
+                        }}
+                    >
                         <Text style={styles.buttonText}>Add to Cart</Text>
                     </TouchableOpacity>
                 </View>

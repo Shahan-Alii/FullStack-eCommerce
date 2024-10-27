@@ -20,8 +20,6 @@ type CartItem = {
 const CartItemCard = ({ product }: any) => {
     const updateCart = useCart((state: any) => state.updateCart);
 
-    const [quantity, setQuantity] = useState(product.quantity);
-
     return (
         <View style={styles.cardContainer}>
             <Image
@@ -35,19 +33,19 @@ const CartItemCard = ({ product }: any) => {
                     {product.name}
                 </Text>
                 <Text style={styles.productPrice}>
-                    {product.price * quantity} $
+                    {(product.price * product.quantity).toFixed(2)} $
                 </Text>
             </View>
             <View style={styles.quantityContainer}>
                 <TouchableOpacity
                     style={styles.quantityButton}
                     onPress={() => {
-                        updateCart({
-                            ...product,
-                            quantity: product.quantity - 1,
-                        });
-
-                        setQuantity((val: number) => val - 1);
+                        if (product.quantity > 1) {
+                            updateCart({
+                                ...product,
+                                quantity: product.quantity - 1,
+                            });
+                        }
                     }}
                 >
                     <Ionicons name="remove" size={20} color="#333" />
@@ -56,12 +54,12 @@ const CartItemCard = ({ product }: any) => {
                 <TouchableOpacity
                     style={styles.quantityButton}
                     onPress={() => {
-                        updateCart({
-                            ...product,
-                            quantity: product.quantity + 1,
-                        });
-
-                        setQuantity((val: number) => val + 1);
+                        if (product.quantity < 100) {
+                            updateCart({
+                                ...product,
+                                quantity: product.quantity + 1,
+                            });
+                        }
                     }}
                 >
                     <Ionicons name="add" size={20} color="#333" />

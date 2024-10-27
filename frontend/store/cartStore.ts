@@ -14,6 +14,7 @@ type CartState = {
 
     addProduct: (product: CartItem) => void;
     updateCart: (product: CartItem) => void;
+    resetCart: () => void;
 };
 
 const useCart = create((set) => ({

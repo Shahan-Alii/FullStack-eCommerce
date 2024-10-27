@@ -14,16 +14,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
 import { Link, useRouter } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import { login } from '@/api/auth';
-import useAuth from '@/store/authStore';
+import { signUp } from '@/api/auth';
 
-export default function Login() {
-    const setUser = useAuth((state: any) => state.setUser);
-    const setToken = useAuth((state: any) => state.setToken);
-
+export default function SignUp() {
     const router = useRouter();
 
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -31,15 +28,11 @@ export default function Login() {
         setPasswordVisible(!passwordVisible);
     };
 
-    const loginMutation = useMutation({
-        mutationFn: () => login(email, password),
+    const signUpMutation = useMutation({
+        mutationFn: () => signUp(email, password, name),
         onSuccess: (data) => {
             console.log('Success', data);
-
-            if (data.user && data.token) {
-                setToken(data.token);
-                setUser(data.user);
-            }
+            router.replace('/(modals)/login');
         },
         onError: (error) => {
             console.log(error);
@@ -62,10 +55,18 @@ export default function Login() {
                     >
                         <View style={styles.header}>
                             <Text style={styles.headerText}>
-                                Login to Your Account
+                                Create Your Account
                             </Text>
                         </View>
                         <View style={styles.inputContainer}>
+                            <TextInput
+                                placeholder="Full Name"
+                                style={styles.input}
+                                autoCapitalize="none"
+                                value={name}
+                                onChangeText={(text) => setName(text)}
+                            />
+
                             <TextInput
                                 placeholder="Email"
                                 style={styles.input}
@@ -99,21 +100,21 @@ export default function Login() {
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => {
-                                loginMutation.mutate();
+                                signUpMutation.mutate();
                             }}
                         >
-                            <Text style={styles.buttonText}>Login</Text>
+                            <Text style={styles.buttonText}>SignUp</Text>
                         </TouchableOpacity>
 
                         <Pressable
                             onPress={() => {
-                                router.replace('/(modals)/signup');
+                                router.replace('/(modals)/login');
                             }}
                         >
                             <Text style={styles.signUpText}>
-                                Don't have an account?
+                                Already have account?{' '}
                                 <Text style={{ color: Colors.primary }}>
-                                    Sign Up
+                                    LogIn
                                 </Text>
                             </Text>
                         </Pressable>

@@ -1,7 +1,15 @@
 import CartItemCard from '@/components/CartItemCard';
+import Colors from '@/constants/Colors';
+import { defaultStyles } from '@/constants/styles';
 import useCart from '@/store/cartStore';
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type CartItem = {
@@ -16,7 +24,16 @@ type CartItem = {
 export default function CartScreen() {
     const items: CartItem[] = useCart((state: any) => state.items);
 
-    console.log(items);
+    const resetCart = useCart((state: any) => state.resetCart);
+
+    const [totalPrice, setTotalPrice] = useState(0);
+
+    useEffect(() => {
+        const total = items.reduce((sum, item) => {
+            return sum + item.price * item.quantity;
+        }, 0);
+        setTotalPrice(total);
+    }, [items]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -25,6 +42,33 @@ export default function CartScreen() {
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <CartItemCard product={item} />}
             />
+
+            <View style={styles.footer}>
+                <Text style={styles.footerText}>
+                    Total: ${totalPrice.toFixed(2)}
+                </Text>
+
+                <View style={styles.btnContainer}>
+                    <TouchableOpacity style={[defaultStyles.btn, styles.Btn]}>
+                        <Text style={defaultStyles.btnText}>Checkout</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[
+                            defaultStyles.btn,
+                            styles.Btn,
+                            { backgroundColor: Colors.grey },
+                        ]}
+                        onPress={resetCart}
+                    >
+                        <Text
+                            style={[defaultStyles.btnText, { color: '#fff' }]}
+                        >
+                            Clear
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </SafeAreaView>
     );
 }
@@ -32,5 +76,29 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        justifyContent: 'flex-start',
+        marginLeft: 15,
+        marginRight: 15,
+        paddingBottom: 20,
+    },
+    footerText: {
+        fontSize: 18,
+        fontFamily: 'mon-bold',
+        marginLeft: 5,
+    },
+    btnContainer: {
+        width: '100%',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+    },
+    Btn: {
+        width: '100%',
+        marginVertical: 5,
     },
 });
