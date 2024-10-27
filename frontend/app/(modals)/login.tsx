@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '@/constants/Colors';
-import { Link, useRouter } from 'expo-router';
+import { Link, Redirect, useRouter } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '@/api/auth';
 import useAuth from '@/store/authStore';
@@ -40,6 +40,7 @@ export default function Login() {
                 setToken(data.token);
                 setUser(data.user);
             }
+            router.dismissAll();
         },
         onError: (error) => {
             console.log(error);

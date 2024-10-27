@@ -1,7 +1,9 @@
+import createOrder from '@/api/orders';
 import CartItemCard from '@/components/CartItemCard';
 import Colors from '@/constants/Colors';
 import { defaultStyles } from '@/constants/styles';
 import useCart from '@/store/cartStore';
+import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import {
     View,
@@ -22,11 +24,30 @@ type CartItem = {
 };
 
 export default function CartScreen() {
-    const items: CartItem[] = useCart((state: any) => state.items);
+    const items = useCart((state: any) => state.items);
 
     const resetCart = useCart((state: any) => state.resetCart);
 
     const [totalPrice, setTotalPrice] = useState(0);
+
+    const createOrderMutation = useMutation({
+        mutationFn: () => {
+            return createOrder(
+                items.map((item: any) => ({
+                    productId: item.id,
+                    quantity: item.quantity,
+                    price: item.price,
+                }))
+            );
+        },
+        onSuccess: (data) => {
+            resetCart();
+            console.log('order created successfully');
+        },
+        onError: (error) => {
+            console.log('error', error);
+        },
+    });
 
     useEffect(() => {
         const total = items.reduce((sum, item) => {
@@ -49,7 +70,12 @@ export default function CartScreen() {
                 </Text>
 
                 <View style={styles.btnContainer}>
-                    <TouchableOpacity style={[defaultStyles.btn, styles.Btn]}>
+                    <TouchableOpacity
+                        style={[defaultStyles.btn, styles.Btn]}
+                        onPress={() => {
+                            createOrderMutation.mutate();
+                        }}
+                    >
                         <Text style={defaultStyles.btnText}>Checkout</Text>
                     </TouchableOpacity>
 
