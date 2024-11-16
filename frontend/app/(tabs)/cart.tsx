@@ -13,6 +13,10 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 type CartItem = {
     id: number;
@@ -50,7 +54,7 @@ export default function CartScreen() {
     });
 
     useEffect(() => {
-        const total = items.reduce((sum, item) => {
+        const total = items.reduce((sum: number, item: any) => {
             return sum + item.price * item.quantity;
         }, 0);
         setTotalPrice(total);
@@ -102,6 +106,7 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginBottom: hp(9.6),
     },
     footer: {
         position: 'absolute',

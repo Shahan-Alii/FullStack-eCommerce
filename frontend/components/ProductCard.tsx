@@ -31,15 +31,6 @@ export default function ProductCard({ product }: any) {
                     </Text>
 
                     <Text style={styles.price}>{product.price} $</Text>
-
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => {
-                            addToCart({ ...product, quantity: 1 });
-                        }}
-                    >
-                        <Text style={styles.buttonText}>Add to Cart</Text>
-                    </TouchableOpacity>
                 </View>
             </TouchableOpacity>
         </Link>
@@ -49,7 +40,7 @@ export default function ProductCard({ product }: any) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
-        height: hp(40),
+        height: hp(30),
         width: wp(45),
         margin: 5,
         borderRadius: 10,

@@ -1,5 +1,8 @@
 {
   "expo": {
+   
+      "newArchEnabled": true
+    ,
     "name": "frontend",
     "slug": "frontend",
       "scheme": "ur-cart",
