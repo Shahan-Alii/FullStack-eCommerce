@@ -34,3 +34,12 @@ export function verifySeller(req: Request, res: Response, next: NextFunction) {
     }
     next();
 }
+
+export function verifyUser(req: Request, res: Response, next: NextFunction) {
+    const role = req.role;
+    if (role !== 'user') {
+        res.status(401).json({ error: 'Access denied' });
+        return;
+    }
+    next();
+}

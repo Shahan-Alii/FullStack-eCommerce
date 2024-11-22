@@ -39,6 +39,8 @@ export default function Login() {
             if (data.user && data.token) {
                 setToken(data.token);
                 setUser(data.user);
+
+                console.log(data.user);
             }
             router.dismissAll();
         },

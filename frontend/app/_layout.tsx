@@ -5,9 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Colors from '@/constants/Colors';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import Toast from 'react-native-toast-message';
 
 export default function RootLayout() {
     const queryClient = new QueryClient();
+    const insets = useSafeAreaInsets();
 
     const [loaded, error] = useFonts({
         mon: require('@/assets/fonts/Montserrat.ttf'),
@@ -64,7 +71,134 @@ export default function RootLayout() {
                         ),
                     }}
                 />
+
+                <Stack.Screen
+                    name="(modals)/editProfile"
+                    options={{
+                        header: () => (
+                            <View
+                                style={[
+                                    {
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        paddingTop: insets.top,
+                                    },
+                                ]}
+                            >
+                                <TouchableOpacity
+                                    style={{
+                                        position: 'absolute',
+                                        left: 10,
+                                        top: insets.top,
+                                    }}
+                                    onPress={() => {
+                                        router.back();
+                                    }}
+                                >
+                                    <Ionicons
+                                        name="chevron-back"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </TouchableOpacity>
+                                <Text
+                                    style={{
+                                        fontSize: hp(2),
+                                        fontFamily: 'mon-bold',
+                                    }}
+                                >
+                                    Edit Profile
+                                </Text>
+                            </View>
+                        ),
+                    }}
+                />
+
+                <Stack.Screen
+                    name="(modals)/addProduct"
+                    options={{
+                        header: () => (
+                            <View
+                                style={[
+                                    {
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        paddingTop: insets.top,
+                                    },
+                                ]}
+                            >
+                                <TouchableOpacity
+                                    style={{
+                                        position: 'absolute',
+                                        left: 10,
+                                        top: insets.top,
+                                    }}
+                                    onPress={() => {
+                                        router.back();
+                                    }}
+                                >
+                                    <Ionicons
+                                        name="chevron-back"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </TouchableOpacity>
+                                <Text
+                                    style={{
+                                        fontSize: hp(2),
+                                        fontFamily: 'mon-bold',
+                                    }}
+                                >
+                                    Add Product
+                                </Text>
+                            </View>
+                        ),
+                    }}
+                />
+
+                <Stack.Screen
+                    name="(modals)/myOrders"
+                    options={{
+                        header: () => (
+                            <View
+                                style={[
+                                    {
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        paddingTop: insets.top,
+                                    },
+                                ]}
+                            >
+                                <TouchableOpacity
+                                    style={{
+                                        position: 'absolute',
+                                        left: 10,
+                                        top: insets.top,
+                                    }}
+                                    onPress={() => {
+                                        router.back();
+                                    }}
+                                >
+                                    <Ionicons
+                                        name="chevron-back"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </TouchableOpacity>
+                                <Text
+                                    style={{
+                                        fontSize: hp(2),
+                                        fontFamily: 'mon-bold',
+                                    }}
+                                >
+                                    My Orders
+                                </Text>
+                            </View>
+                        ),
+                    }}
+                />
             </Stack>
+            <Toast />
         </QueryClientProvider>
     );
 }

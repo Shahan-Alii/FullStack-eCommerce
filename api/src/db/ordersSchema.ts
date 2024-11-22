@@ -5,6 +5,7 @@ import {
     timestamp,
     varchar,
 } from 'drizzle-orm/pg-core';
+
 import { usersTable } from './usersSchema.js';
 import { productsTable } from './productsSchema.js';
 import { createInsertSchema } from 'drizzle-zod';
@@ -12,20 +13,20 @@ import { z } from 'zod';
 
 export const ordersTable = pgTable('orders', {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    createdAt: timestamp().notNull().defaultNow(),
+    created_at: timestamp().notNull().defaultNow(),
+    order_number: varchar(),
     status: varchar({ length: 50 }).notNull().default('New'),
-
-    userId: integer()
+    user_id: integer()
         .references(() => usersTable.id)
         .notNull(),
 });
 
 export const orderItemsTable = pgTable('order_items', {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    orderId: integer()
+    order_id: integer()
         .references(() => ordersTable.id)
         .notNull(),
-    productId: integer()
+    product_id: integer()
         .references(() => productsTable.id)
         .notNull(),
 
@@ -35,14 +36,14 @@ export const orderItemsTable = pgTable('order_items', {
 
 export const insertOrderSchema = createInsertSchema(ordersTable).omit({
     id: true,
-    userId: true,
+    user_id: true,
     status: true,
-    createdAt: true,
+    created_at: true,
 });
 
 export const insertOrderItemSchema = createInsertSchema(orderItemsTable).omit({
     id: true,
-    orderId: true,
+    order_id: true,
 });
 
 export const insertOrderWithItemsSchema = z.object({

@@ -28,6 +28,14 @@ export default function Carousel() {
                 data={slides}
                 paginationStyle={styles.paginationStyle}
                 paginationActiveColor={Colors.primary}
+                paginationStyleItemActive={{ width: hp(4.5), height: hp(1.2) }}
+                paginationStyleItemInactive={{
+                    height: hp(1.2),
+                    width: hp(1.2),
+                }}
+                paginationStyleItem={{
+                    marginHorizontal: hp(0.4),
+                }}
                 renderItem={({ item }) => (
                     <View style={styles.imageContainer}>
                         <Image
@@ -51,7 +59,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         width: wp(100),
-        height: hp(30),
+        height: hp(22),
         overflow: 'hidden',
         borderRadius: 30,
     },
@@ -62,12 +70,6 @@ const styles = StyleSheet.create({
     },
     paginationStyle: {
         position: 'absolute',
-        bottom: hp(0),
-        backgroundColor: '#292526',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        padding: 15,
-        height: hp(2),
+        bottom: -10,
     },
 });

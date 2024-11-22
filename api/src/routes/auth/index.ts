@@ -3,6 +3,7 @@ import { validateData } from '../../middlewares/validationMiddleware.js';
 import {
     createUserSchema,
     loginSchema,
+    updateUserSchema,
     usersTable,
 } from '../../db/usersSchema.js';
 import bcrypt from 'bcryptjs';
@@ -69,6 +70,43 @@ router.post(
 
             res.status(200).json({ token, user });
         } catch (error) {
+            res.status(500).send('Something went wrong');
+        }
+    }
+);
+
+router.post(
+    '/editProfile',
+    validateData(updateUserSchema),
+    async (req: Request, res: Response) => {
+        try {
+            const { email, name, address, image, contact } = req.cleanBody;
+
+            // Check if the user exists
+            const [user] = await db
+                .select()
+                .from(usersTable)
+                .where(eq(usersTable.email, email));
+
+            if (!user) {
+                res.status(401).json({ message: 'User not found' });
+                return;
+            }
+
+            // Update the user with new values
+            await db
+                .update(usersTable)
+                .set({
+                    name: name || user.name,
+                    address: address || user.address,
+                    image: image || user.image,
+                    contact: contact || user.contact,
+                })
+                .where(eq(usersTable.email, email));
+
+            res.status(200).json({ message: 'Profile updated successfully' });
+        } catch (error) {
+            console.error(error);
             res.status(500).send('Something went wrong');
         }
     }

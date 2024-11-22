@@ -5,7 +5,7 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export default async function createOrder(items: []) {
     const token = useAuth.getState().token;
 
-    const res = await fetch(`${API_URL}/orders`, {
+    const res = await fetch(`${API_URL}/orders/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -14,8 +14,8 @@ export default async function createOrder(items: []) {
         body: JSON.stringify({ order: {}, items }),
     });
 
-    if (!res.ok) {
-        throw new Error('Failed to Login');
+    if (!res) {
+        throw new Error('Failed to Chechkout');
     }
     const data = await res.json();
 

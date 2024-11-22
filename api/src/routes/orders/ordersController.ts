@@ -2,26 +2,31 @@ import { Request, Response } from 'express';
 import { db } from '../../db/index.js';
 import { orderItemsTable, ordersTable } from '../../db/ordersSchema.js';
 import { eq } from 'drizzle-orm';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function createOrder(req: Request, res: Response) {
     try {
         const { order, items } = req.cleanBody;
 
         const userId = req.userId;
-        console.log(userId);
+
         if (!userId) {
             res.status(400).json({ message: 'Invalid order data' });
+            return;
         }
+
+        // Generate a unique order number
+        const order_number = uuidv4().slice(0, 10);
 
         const [newOrder] = await db
             .insert(ordersTable)
-            // @ts-ignore
-            .values({ userId: userId })
+
+            .values({ user_id: Number(userId), order_number: order_number })
             .returning();
 
         const orderItems = items.map((item: any) => ({
             ...item,
-            orderId: newOrder.id,
+            order_id: newOrder.id,
         }));
         const newOrderItems = await db
             .insert(orderItemsTable)
@@ -41,7 +46,7 @@ export async function listOrders(req: Request, res: Response) {
 
         if (req.role == 'admin') {
             orders = await db.select().from(ordersTable);
-        } else {
+        } else if (req.role == 'seller') {
             orders = await db
                 .select()
                 .from(ordersTable)
@@ -64,7 +69,7 @@ export async function getOrder(req: Request, res: Response) {
             .where(eq(ordersTable.id, id))
             .leftJoin(
                 orderItemsTable,
-                eq(ordersTable.id, orderItemsTable.orderId)
+                eq(ordersTable.id, orderItemsTable.order_id)
             );
 
         if (orderWithItems.length === 0) {

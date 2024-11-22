@@ -71,7 +71,7 @@ const TabBarIcon = ({ onPress, isFocused, label }: Props) => {
                         color: 'white',
                         fontWeight: 600,
                         fontFamily: 'mon-bold',
-                        fontSize: hp(1.6),
+                        fontSize: hp(1.4),
                     },
                     rText,
                 ]}

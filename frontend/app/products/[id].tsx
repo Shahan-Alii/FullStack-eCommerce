@@ -1,5 +1,11 @@
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import React, {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useState,
+} from 'react';
 import {
     View,
     Text,
@@ -10,15 +16,18 @@ import {
     Share,
     ActivityIndicator,
 } from 'react-native';
-import products from '@/assets/products.json'; // Assuming this is where your products data is
-import { Ionicons } from '@expo/vector-icons';
-import Colors from '@/constants/Colors'; // Update this path if necessary
+
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Colors from '@/constants/Colors';
 import Animated, {
+    FadeInLeft,
     SlideInDown,
     interpolate,
     useAnimatedRef,
     useAnimatedStyle,
     useScrollViewOffset,
+    useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
 import {
@@ -28,15 +37,38 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { defaultStyles } from '@/constants/styles';
 import { fetchProductById } from '@/api/products';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useCart from '@/store/cartStore';
+import useWishlist from '@/store/wishListStore';
+import { Rating } from 'react-native-ratings';
+import Reviews from '@/components/Reviews';
+import LineSeparator from '@/components/LineSeparator';
+import Toast from 'react-native-toast-message';
 
 const ProductsDetailsScreen = () => {
     const { id } = useLocalSearchParams();
-
     const navigation = useNavigation();
+    const router = useRouter();
+    const queryClient = useQueryClient();
 
     const [quantity, setQuantity] = useState(0);
+    const footerTranslateY = useSharedValue(0);
+
+    const addToCart = useCart((state: any) => state.addProduct);
+    const addToWish = useWishlist((state: any) => state.addToWishList);
+    const removeFromWish = useWishlist(
+        (state: any) => state.removeFromWishList
+    );
+    const wishList = useWishlist((state: any) => state.items);
+
+    const [isInWishList, setIsInWishList] = useState(
+        wishList.some((item: any) => item.id == id)
+    );
+
+    useEffect(() => {
+        setIsInWishList(wishList.some((item: any) => item.id == id));
+        footerTranslateY.value = withTiming(1, { duration: 900 });
+    }, [wishList]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -55,29 +87,26 @@ const ProductsDetailsScreen = () => {
                             color={'#000000'}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.roundButton}>
-                        <Ionicons
-                            name="heart-outline"
-                            size={22}
-                            color={'#000'}
-                        />
-                    </TouchableOpacity>
                 </View>
             ),
             headerLeft: () => (
                 <TouchableOpacity
                     style={styles.roundButton}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => router.back()}
                 >
                     <Ionicons name="chevron-back" size={24} color={'#000'} />
                 </TouchableOpacity>
             ),
         });
-    }, [navigation]);
+    }, []);
 
-    {
-        /* fetch product */
-    }
+    const rFooter = useAnimatedStyle(() => {
+        const translate = interpolate(footerTranslateY.value, [0, 1], [90, 0]);
+
+        return {
+            transform: [{ translateY: translate }],
+        };
+    });
 
     const {
         data: product,
@@ -87,18 +116,6 @@ const ProductsDetailsScreen = () => {
         queryKey: ['products', id],
         queryFn: () => fetchProductById(Number(id)),
     });
-
-    const addToCart = useCart((state: any) => state.addProduct);
-    const cart = useCart((state: any) => state.items);
-
-    const handleAddToCart = () => {
-        addToCart({ ...product, quantity });
-
-        // console.log(cart);
-    };
-    {
-        /* error handling */
-    }
 
     if (isLoading) {
         return (
@@ -124,7 +141,7 @@ const ProductsDetailsScreen = () => {
                 }}
             >
                 <Text style={{ fontSize: hp(10), fontFamily: 'mon-med' }}>
-                    Error fetching data
+                    Error fetching Reviews
                 </Text>
             </View>
         );
@@ -142,9 +159,36 @@ const ProductsDetailsScreen = () => {
         }
     };
 
-    {
-        /* return product if fetched correctly*/
-    }
+    const handleAddToCart = () => {
+        addToCart({ ...product, quantity });
+
+        Toast.show({
+            type: 'success',
+            text1: 'Added',
+            text2: 'Product added to Cart',
+            visibilityTime: 2000,
+        });
+    };
+
+    const handleAddToWishList = () => {
+        if (isInWishList) {
+            removeFromWish(Number(id));
+            Toast.show({
+                type: 'success',
+                text1: 'Removed',
+                text2: 'Product removed from WishList',
+                visibilityTime: 2000,
+            });
+        } else {
+            addToWish({ ...product });
+            Toast.show({
+                type: 'success',
+                text1: 'Added',
+                text2: 'Product added to WishList',
+                visibilityTime: 2000,
+            });
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -159,6 +203,9 @@ const ProductsDetailsScreen = () => {
                 />
 
                 <View style={styles.infoContainer}>
+                    <TouchableOpacity onPress={handleAddToWishList}>
+                        <AntDesign name="heart" size={24} color="black" />
+                    </TouchableOpacity>
                     <Text style={styles.name}>{product.name}</Text>
                     <Text style={styles.price}>
                         ${product.price.toFixed(2)}

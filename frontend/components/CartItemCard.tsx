@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Entypo from '@expo/vector-icons/Entypo';
 import Colors from '@/constants/Colors';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import useCart from '@/store/cartStore';
+import { Link } from 'expo-router';
 
 type CartItem = {
     id: number;
@@ -20,52 +22,73 @@ type CartItem = {
 const CartItemCard = ({ product }: any) => {
     const updateCart = useCart((state: any) => state.updateCart);
 
-    return (
-        <View style={styles.cardContainer}>
-            <Image
-                source={{ uri: product.image }}
-                style={styles.image}
-                resizeMode="contain"
-            />
+    const removeFromCart = useCart((state: any) => state.removeFromCart);
 
-            <View style={styles.infoContainer}>
-                <Text style={styles.productName} numberOfLines={1}>
-                    {product.name}
-                </Text>
-                <Text style={styles.productPrice}>
-                    {(product.price * product.quantity).toFixed(2)} $
-                </Text>
-            </View>
-            <View style={styles.quantityContainer}>
-                <TouchableOpacity
-                    style={styles.quantityButton}
-                    onPress={() => {
-                        if (product.quantity > 1) {
-                            updateCart({
-                                ...product,
-                                quantity: product.quantity - 1,
-                            });
-                        }
-                    }}
-                >
-                    <Ionicons name="remove" size={20} color="#333" />
-                </TouchableOpacity>
-                <Text style={styles.quantityText}>{product.quantity}</Text>
-                <TouchableOpacity
-                    style={styles.quantityButton}
-                    onPress={() => {
-                        if (product.quantity < 100) {
-                            updateCart({
-                                ...product,
-                                quantity: product.quantity + 1,
-                            });
-                        }
-                    }}
-                >
-                    <Ionicons name="add" size={20} color="#333" />
-                </TouchableOpacity>
-            </View>
-        </View>
+    return (
+        <Link href={`/products/${product.id}`} asChild>
+            <TouchableOpacity>
+                <View style={styles.cardContainer}>
+                    <Image
+                        source={{ uri: product.image }}
+                        style={styles.image}
+                        resizeMode="contain"
+                    />
+
+                    <View style={styles.infoContainer}>
+                        <Text style={styles.productName} numberOfLines={1}>
+                            {product.name}
+                        </Text>
+                        <Text style={styles.productPrice}>
+                            {(product.price * product.quantity).toFixed(2)} $
+                        </Text>
+                        <View style={styles.quantityContainer}>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => {
+                                    if (product.quantity > 1) {
+                                        updateCart({
+                                            ...product,
+                                            quantity: product.quantity - 1,
+                                        });
+                                    }
+                                }}
+                            >
+                                <Ionicons
+                                    name="remove"
+                                    size={20}
+                                    color="#333"
+                                />
+                            </TouchableOpacity>
+                            <Text style={styles.quantityText}>
+                                {product.quantity}
+                            </Text>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => {
+                                    if (product.quantity < 100) {
+                                        updateCart({
+                                            ...product,
+                                            quantity: product.quantity + 1,
+                                        });
+                                    }
+                                }}
+                            >
+                                <Ionicons name="add" size={20} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* remove and wishList button */}
+
+                    <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => removeFromCart(product.id)}
+                    >
+                        <Entypo name="cross" size={24} color="black" />
+                    </TouchableOpacity>
+                </View>
+            </TouchableOpacity>
+        </Link>
     );
 };
 
@@ -92,7 +115,8 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
         flex: 1,
-        marginLeft: 15,
+        marginLeft: hp(3),
+        gap: hp(1),
     },
     productName: {
         fontSize: 16,
@@ -106,7 +130,6 @@ const styles = StyleSheet.create({
         fontFamily: 'mon-med',
     },
     quantityContainer: {
-        marginLeft: 14,
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 4,
@@ -123,7 +146,11 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     removeButton: {
-        padding: 6,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f1f1f1',
+        padding: 10,
+        borderRadius: 20,
     },
 });
 

@@ -22,6 +22,7 @@ export default function ProductsList() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     flex: 1,
+                    height: hp(40),
                 }}
             >
                 <ActivityIndicator size={'large'} />
@@ -36,10 +37,11 @@ export default function ProductsList() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     flex: 1,
+                    height: hp(40),
                 }}
             >
-                <Text style={{ fontSize: hp(10), fontFamily: 'mon-med' }}>
-                    Error fetching data
+                <Text style={{ fontSize: hp(5), fontFamily: 'mon-med' }}>
+                    Check Your Connection!
                 </Text>
             </View>
         );

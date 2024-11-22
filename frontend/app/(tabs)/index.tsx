@@ -26,7 +26,10 @@ export default function Home() {
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
 
-            <ScrollView>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: hp(13) }}
+            >
                 <Header />
                 <View
                     style={{
@@ -48,22 +51,27 @@ export default function Home() {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         paddingHorizontal: hp(1.2),
-                        paddingTop: hp(5),
+                        paddingTop: hp(2.5),
                     }}
                 >
-                    <Text style={{ fontFamily: 'mon-bold', fontSize: hp(3) }}>
+                    <Text
+                        style={{
+                            fontFamily: 'mon-bold',
+                            fontSize: hp(3),
+                        }}
+                    >
                         Trending 🔥
                     </Text>
                     <TouchableOpacity
                         style={{
                             backgroundColor: Colors.primary,
-                            padding: hp(1.4),
+                            padding: hp(1.5),
                             borderRadius: hp(1.9),
                         }}
                     >
                         <Text
                             style={{
-                                fontFamily: 'mon-bold',
+                                fontFamily: 'mon-med',
                                 fontSize: hp(2),
                                 color: 'white',
                             }}

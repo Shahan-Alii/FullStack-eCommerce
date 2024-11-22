@@ -16,6 +16,7 @@ type CartState = {
 
     addProduct: (product: CartItem) => void;
     updateCart: (product: CartItem) => void;
+    removeFromCart: (productId: number) => void;
     resetCart: () => void;
 };
 
@@ -63,6 +64,14 @@ const useCart = create(
                                   quantity: product.quantity,
                               }
                             : item
+                    );
+                    return { items: updatedItems };
+                }),
+
+            removeFromCart: (productId: number) =>
+                set((state: CartState) => {
+                    const updatedItems = state.items.filter(
+                        (item) => item.id != productId
                     );
                     return { items: updatedItems };
                 }),

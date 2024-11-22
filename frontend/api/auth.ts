@@ -33,3 +33,26 @@ export async function signUp(email: string, password: string, name: string) {
 
     return data;
 }
+
+export async function editProfile(
+    email: string,
+    image: string,
+    name: string,
+    contact: string,
+    address: string
+) {
+    const res = await fetch(`${API_URL}/auth/editProfile`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, contact, name, address, image }),
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to Update User Data');
+    }
+    const data = await res.json();
+
+    return data;
+}

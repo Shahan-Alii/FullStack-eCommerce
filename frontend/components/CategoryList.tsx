@@ -12,6 +12,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Colors from '@/constants/Colors';
+import { Link, useLocalSearchParams } from 'expo-router';
 
 interface CategoryListProps {
     category: string;
@@ -58,25 +59,19 @@ const CategoryList = ({ category, changeCategory }: CategoryListProps) => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={[
-                            styles.categoryCard,
-                            {
-                                backgroundColor:
-                                    category == item.name
-                                        ? Colors.primary
-                                        : '#f9f9f9',
-                            },
-                        ]}
-                        onPress={() => {
-                            changeCategory(item.name);
-                        }}
-                    >
-                        {item.icon}
-                        <Text style={styles.categoryName} numberOfLines={1}>
-                            {item.name}
-                        </Text>
-                    </TouchableOpacity>
+                    <Link href={`/products/category/${item.name}`} asChild>
+                        <TouchableOpacity>
+                            <View style={[styles.categoryCard]}>
+                                {item.icon}
+                                <Text
+                                    style={styles.categoryName}
+                                    numberOfLines={1}
+                                >
+                                    {item.name}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </Link>
                 )}
             />
         </View>
@@ -93,14 +88,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 10,
         marginRight: 10,
-        borderRadius: 10,
+        borderRadius: hp(2),
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 1,
         elevation: 2,
         width: wp(27),
         height: wp(19),
+        backgroundColor: '#f9f9f9',
     },
     categoryName: {
         marginTop: 5,

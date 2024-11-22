@@ -1,0 +1,1 @@
+ALTER TABLE "products" RENAME COLUMN "sold_quantity" TO "sold_quan";

@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "soldQuantity" integer DEFAULT 0;

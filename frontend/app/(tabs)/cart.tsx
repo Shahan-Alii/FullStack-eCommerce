@@ -49,7 +49,7 @@ export default function CartScreen() {
             console.log('order created successfully');
         },
         onError: (error) => {
-            console.log('error', error);
+            console.log('error on checkout', error);
         },
     });
 
