@@ -22,6 +22,7 @@ import {
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import Colors from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
 
 export default function CategoryProducts() {
     const { id: categoryName } = useLocalSearchParams();
@@ -56,6 +57,13 @@ export default function CategoryProducts() {
     }
 
     if (error) {
+        Toast.show({
+            type: 'error',
+            text1: 'Failed to load products',
+            text2: 'Please check your internet connection!',
+            visibilityTime: 2000,
+        });
+
         return (
             <View
                 style={{
@@ -114,7 +122,9 @@ export default function CategoryProducts() {
 
             <FlatList
                 data={data}
-                renderItem={({ item }) => <ProductCard product={item} />}
+                renderItem={({ item, index }) => (
+                    <ProductCard product={item} index={index} />
+                )}
                 numColumns={2}
                 keyExtractor={(item) => item.id.toString()}
                 showsVerticalScrollIndicator={false}

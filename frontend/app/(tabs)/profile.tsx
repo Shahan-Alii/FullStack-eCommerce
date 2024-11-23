@@ -135,13 +135,6 @@ export default function ProfileScreen() {
                                     router.push('(modals)/addProduct');
                                 }}
                             />
-                            <OptionItem
-                                icon="shopping-bag"
-                                text="Manage Orders"
-                                onPress={() => {
-                                    router.push('(modals)/editProfile');
-                                }}
-                            />
                         </>
                     )}
 
@@ -168,15 +161,18 @@ export default function ProfileScreen() {
                     <OptionItem icon="payment" text="Payment" />
                     <OptionItem icon="policy" text="Privacy Policy" />
                     <OptionItem icon="help-outline" text="Help Center" />
-                </View>
 
-                {/* Logout */}
-                <TouchableOpacity
-                    style={styles.logoutButton}
-                    onPress={handleLogout}
-                >
-                    <Feather name="power" size={24} color="white" />
-                </TouchableOpacity>
+                    {/* Logout */}
+                    <TouchableOpacity
+                        style={styles.optionItem}
+                        onPress={handleLogout}
+                    >
+                        <MaterialIcons name="logout" size={24} color="red" />
+                        <Text style={[styles.optionText, { color: 'red' }]}>
+                            Logout
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

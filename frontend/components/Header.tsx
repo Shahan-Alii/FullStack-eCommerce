@@ -13,7 +13,7 @@ export default function Header() {
     const insets = useSafeAreaInsets();
 
     return (
-        <View style={[styles.container]}>
+        <View style={[styles.container, { paddingTop: hp(2) }]}>
             <TouchableOpacity style={styles.searchContainer}>
                 <Text style={styles.searchText}>Search</Text>
                 <Feather name="search" size={20} color="#7e7e7e" />

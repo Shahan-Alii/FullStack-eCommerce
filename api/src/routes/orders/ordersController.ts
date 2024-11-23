@@ -3,6 +3,7 @@ import { db } from '../../db/index.js';
 import { orderItemsTable, ordersTable } from '../../db/ordersSchema.js';
 import { eq } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
+import { productsTable } from '../../db/productsSchema.js';
 
 export async function createOrder(req: Request, res: Response) {
     try {
@@ -59,7 +60,7 @@ export async function listOrders(req: Request, res: Response) {
     }
 }
 
-export async function getOrder(req: Request, res: Response) {
+export async function getOrder(req: Request, res: Response): Promise<void> {
     try {
         const id = parseInt(req.params.id);
 
@@ -70,21 +71,31 @@ export async function getOrder(req: Request, res: Response) {
             .leftJoin(
                 orderItemsTable,
                 eq(ordersTable.id, orderItemsTable.order_id)
+            )
+            .leftJoin(
+                productsTable,
+                eq(orderItemsTable.product_id, productsTable.id)
             );
+
+        console.log(orderWithItems);
 
         if (orderWithItems.length === 0) {
             res.status(404).send('Order not found');
+            return;
         }
 
         const mergedOrder = {
             ...orderWithItems[0].orders,
-            items: orderWithItems.map((orderItem) => orderItem.order_items),
+            items: orderWithItems.map((orderItem) => ({
+                ...orderItem.order_items,
+                product: orderItem.products,
+            })),
         };
 
         res.status(200).json(mergedOrder);
     } catch (error) {
         console.log(error);
-        res.status(500).send(error);
+        res.status(500).send('An error occurred');
     }
 }
 

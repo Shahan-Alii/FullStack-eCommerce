@@ -17,6 +17,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import Toast from 'react-native-toast-message';
 
 type CartItem = {
     id: number;
@@ -46,9 +47,22 @@ export default function CartScreen() {
         },
         onSuccess: (data) => {
             resetCart();
+            Toast.show({
+                type: 'success',
+                text1: 'Ordered',
+                text2: 'Your order has been placed',
+                visibilityTime: 2000,
+            });
+
             console.log('order created successfully');
         },
         onError: (error) => {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to place order',
+                text2: 'Please Try Again!',
+                visibilityTime: 2000,
+            });
             console.log('error on checkout', error);
         },
     });

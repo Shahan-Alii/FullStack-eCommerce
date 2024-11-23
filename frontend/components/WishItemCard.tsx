@@ -8,6 +8,7 @@ import {
 } from 'react-native-responsive-screen';
 import useWishlist from '@/store/wishListStore'; // Assuming you have a store for the wish list
 import { Link } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 type WishItem = {
     id: number;
@@ -43,7 +44,16 @@ const WishItemCard = ({ product }: any) => {
 
                     <TouchableOpacity
                         style={styles.removeButton}
-                        onPress={() => removeFromWishList(product.id)}
+                        onPress={() => {
+                            removeFromWishList(product.id);
+
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Removed',
+                                text2: 'Product Removed from WishList',
+                                visibilityTime: 2000,
+                            });
+                        }}
                     >
                         <Entypo name="cross" size={24} color="black" />
                     </TouchableOpacity>

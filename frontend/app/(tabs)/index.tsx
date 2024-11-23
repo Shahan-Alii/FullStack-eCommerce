@@ -51,7 +51,7 @@ export default function Home() {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         paddingHorizontal: hp(1.2),
-                        paddingTop: hp(2.5),
+                        paddingTop: hp(3.2),
                     }}
                 >
                     <Text
@@ -60,20 +60,14 @@ export default function Home() {
                             fontSize: hp(3),
                         }}
                     >
-                        Trending 🔥
+                        Trending
                     </Text>
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: Colors.primary,
-                            padding: hp(1.5),
-                            borderRadius: hp(1.9),
-                        }}
-                    >
+                    <TouchableOpacity style={{}}>
                         <Text
                             style={{
-                                fontFamily: 'mon-med',
+                                fontFamily: 'mon-bold',
                                 fontSize: hp(2),
-                                color: 'white',
+                                color: 'black',
                             }}
                         >
                             View All

@@ -24,6 +24,7 @@ import { useRouter } from 'expo-router';
 
 import { Entypo } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 export default function EditScreen() {
     const user = useAuth((state: any) => state.user);
@@ -54,12 +55,24 @@ export default function EditScreen() {
             // console.log('Success', data);
 
             setUser({ name, image, contact, address });
-            Alert.alert('Success', 'Profile Updated successfully!');
+
+            Toast.show({
+                type: 'success',
+                text1: 'Updated',
+                text2: 'Your Profile details has been updated !',
+                visibilityTime: 2000,
+            });
+
             setIsLoading(0);
         },
         onError: (error) => {
             console.error('Error:', error);
-            Alert.alert('Error', 'Failed to update profile. Please try again.');
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to update profile',
+                text2: 'Please Try Again!',
+                visibilityTime: 2000,
+            });
             setIsLoading(0);
         },
     });

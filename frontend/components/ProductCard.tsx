@@ -7,31 +7,80 @@ import {
 import Colors from '@/constants/Colors';
 import { Link } from 'expo-router';
 import useCart from '@/store/cartStore';
+import Animated, { SlideInDown } from 'react-native-reanimated';
+import { Rating } from 'react-native-ratings';
+import { center } from '@cloudinary/url-gen/qualifiers/textAlignment';
 
-export default function ProductCard({ product }: any) {
+export default function ProductCard({ product, index }: any) {
     const addToCart = useCart((state: any) => state.addProduct);
+
+    if (index % 2 == 1) {
+        index--;
+    }
 
     return (
         <Link href={`/products/${product.id}`} asChild>
-            <TouchableOpacity style={styles.container}>
-                <Image
-                    source={{ uri: product.image }}
-                    style={styles.image}
-                    resizeMode="contain"
-                />
+            <TouchableOpacity>
+                <Animated.View
+                    style={styles.container}
+                    entering={SlideInDown.duration(900).delay(index * 100)}
+                >
+                    <Image
+                        source={{ uri: product.image }}
+                        style={styles.image}
+                        resizeMode="contain"
+                    />
 
-                <View style={styles.textContainer}>
-                    <Text
-                        style={styles.name}
-                        numberOfLines={1}
-                        adjustsFontSizeToFit
-                        minimumFontScale={0.9}
-                    >
-                        {product.name}
-                    </Text>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.name} numberOfLines={1}>
+                            {product.name}
+                        </Text>
 
-                    <Text style={styles.price}>{product.price} $</Text>
-                </View>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                gap: hp(2),
+                                paddingVertical: hp(1),
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '100%',
+                            }}
+                        >
+                            <View style={styles.soldQuantityContainer}>
+                                <Text
+                                    style={{
+                                        fontFamily: 'mon-med',
+                                        fontSize: hp(1.7),
+                                    }}
+                                >
+                                    {product.sold_quantity} sold
+                                </Text>
+                            </View>
+
+                            <View style={styles.reviewsContainer}>
+                                <Rating
+                                    type="star"
+                                    startingValue={Number(
+                                        (product.rating / 5).toFixed(2)
+                                    )}
+                                    readonly={true}
+                                    imageSize={hp(2.5)}
+                                    ratingCount={1}
+                                />
+                                <Text
+                                    style={{
+                                        fontSize: hp(2.5),
+                                        fontFamily: 'mon-reg',
+                                    }}
+                                >
+                                    {Number(product.rating).toFixed(1)}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <Text style={styles.price}>{product.price} $</Text>
+                    </View>
+                </Animated.View>
             </TouchableOpacity>
         </Link>
     );
@@ -40,7 +89,7 @@ export default function ProductCard({ product }: any) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
-        height: hp(30),
+        height: hp(35),
         width: wp(45),
         margin: 5,
         borderRadius: 10,
@@ -55,8 +104,9 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     image: {
-        width: '100%',
-        height: '60%',
+        width: '70%',
+        height: '50%',
+        borderRadius: 10,
     },
     textContainer: {
         alignItems: 'flex-start',
@@ -71,23 +121,28 @@ const styles = StyleSheet.create({
     },
     price: {
         fontFamily: 'mon-bold',
-        fontSize: hp(2.9),
+        fontSize: hp(2.7),
         alignSelf: 'flex-start',
         padding: 5,
         marginBottom: 4,
         marginLeft: 4,
     },
-    button: {
-        backgroundColor: Colors.primary,
-        height: hp(5),
-        width: '100%',
-        borderRadius: 10,
+
+    soldQuantityContainer: {
+        backgroundColor: Colors.lightGrey,
+        borderRadius: hp(1.1),
+        width: wp(15),
+        height: hp(4),
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 5,
     },
-    buttonText: {
-        color: '#fff',
-        fontFamily: 'mon-med',
+    reviewsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: hp(0.7),
+        borderLeftColor: Colors.grey,
+        borderLeftWidth: StyleSheet.hairlineWidth,
+        paddingLeft: 8,
     },
 });

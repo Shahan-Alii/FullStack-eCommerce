@@ -112,4 +112,38 @@ router.post(
     }
 );
 
+router.post('/toggleRole', async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+
+        // Validate user existence
+        const [user] = await db
+            .select()
+            .from(usersTable)
+            .where(eq(usersTable.email, email));
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        // Toggle the role
+        const newRole = user.role === 'seller' ? 'user' : 'seller';
+
+        // Update the role in the database
+        await db
+            .update(usersTable)
+            .set({ role: newRole })
+            .where(eq(usersTable.email, email));
+
+        res.status(200).json({
+            message: `Role updated to ${newRole} successfully`,
+            newRole,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Something went wrong');
+    }
+});
+
 export default router;

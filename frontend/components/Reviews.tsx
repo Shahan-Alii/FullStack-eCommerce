@@ -18,6 +18,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Colors from '@/constants/Colors';
+import Toast from 'react-native-toast-message';
 
 type ReviewsProps = {
     id: number;
@@ -53,7 +54,13 @@ export default function Reviews({ id, totalReviews }: ReviewsProps) {
         }) => createReview(rating, id, comment),
         onSuccess: (data) => {
             console.log('Review created successfully');
-            console.log(data);
+
+            Toast.show({
+                type: 'success',
+                text1: 'Review Added',
+                text2: 'Your Review is added Succesfully',
+                visibilityTime: 2000,
+            });
 
             queryClient.invalidateQueries({
                 queryKey: ['products', id], // The query key you're using in useQuery for product
@@ -66,13 +73,14 @@ export default function Reviews({ id, totalReviews }: ReviewsProps) {
             queryClient.invalidateQueries({
                 queryKey: ['reviews', id], // The query key you're using in useQuery for reviews
             });
-
-            const aaa = queryClient.getQueriesData({
-                queryKey: ['products', id], // The query key you're using in useQuery for product
-            });
-            console.log('data', aaa);
         },
         onError: (error) => {
+            Toast.show({
+                type: 'error',
+                text1: 'Review not added',
+                text2: 'Please Try Again!',
+                visibilityTime: 2000,
+            });
             console.log('error', error);
         },
     });
@@ -127,11 +135,6 @@ export default function Reviews({ id, totalReviews }: ReviewsProps) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>
-                Reviews{' '}
-                <Text style={{ fontFamily: 'mon-med' }}> ({totalReviews})</Text>
-            </Text>
-
             {/*Conditional rendering id no of reviews is 0 then No Reviews otherwise all reviews will be printed by map */}
 
             <ScrollView
@@ -151,7 +154,7 @@ export default function Reviews({ id, totalReviews }: ReviewsProps) {
                             justifyContent: 'center',
                             alignItems: 'center',
                             height: hp(20),
-                            width: wp(87),
+                            width: wp(77),
                         }}
                     >
                         <Text
@@ -159,6 +162,7 @@ export default function Reviews({ id, totalReviews }: ReviewsProps) {
                                 fontSize: hp(3),
                                 fontFamily: 'mon-reg',
                                 textAlign: 'center',
+                                width: wp(100),
                             }}
                         >
                             (No reviews Yet)
@@ -260,9 +264,7 @@ export default function Reviews({ id, totalReviews }: ReviewsProps) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-    },
+    container: { paddingVertical: hp(2) },
     header: {
         fontSize: 24,
         marginBottom: 12,

@@ -21,7 +21,9 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Colors from '@/constants/Colors';
 import Animated, {
+    FadeIn,
     FadeInLeft,
+    FadeInUp,
     SlideInDown,
     interpolate,
     useAnimatedRef,
@@ -51,7 +53,7 @@ const ProductsDetailsScreen = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    const [quantity, setQuantity] = useState(0);
+    const [quantity, setQuantity] = useState(1);
     const footerTranslateY = useSharedValue(0);
 
     const addToCart = useCart((state: any) => state.addProduct);
@@ -65,9 +67,23 @@ const ProductsDetailsScreen = () => {
         wishList.some((item: any) => item.id == id)
     );
 
+    const {
+        data: product,
+        isLoading,
+        error,
+    } = useQuery({
+        queryKey: ['products', id],
+        queryFn: () => fetchProductById(Number(id)),
+    });
+
+    useEffect(() => {
+        if (!isLoading) {
+            footerTranslateY.value = withTiming(1, { duration: 900 });
+        }
+    }, [isLoading]);
+
     useEffect(() => {
         setIsInWishList(wishList.some((item: any) => item.id == id));
-        footerTranslateY.value = withTiming(1, { duration: 900 });
     }, [wishList]);
 
     useLayoutEffect(() => {
@@ -108,15 +124,6 @@ const ProductsDetailsScreen = () => {
         };
     });
 
-    const {
-        data: product,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ['products', id],
-        queryFn: () => fetchProductById(Number(id)),
-    });
-
     if (isLoading) {
         return (
             <View
@@ -132,6 +139,13 @@ const ProductsDetailsScreen = () => {
     }
 
     if (error) {
+        Toast.show({
+            type: 'error',
+            text1: 'Failed to load product',
+            text2: 'Please check your internet connection!',
+            visibilityTime: 2000,
+        });
+
         return (
             <View
                 style={{
@@ -191,33 +205,139 @@ const ProductsDetailsScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Animated.ScrollView
-                contentContainerStyle={{}}
-                scrollEventThrottle={16}
-            >
-                <Animated.Image
-                    source={{ uri: product.image }}
-                    style={[styles.image]}
-                    resizeMode="contain"
-                />
+        <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)}>
+            <SafeAreaView style={styles.container}>
+                <Animated.ScrollView
+                    contentContainerStyle={{}}
+                    scrollEventThrottle={16}
+                >
+                    <Animated.Image
+                        source={{ uri: product.image }}
+                        style={[styles.image]}
+                        resizeMode="contain"
+                    />
 
-                <View style={styles.infoContainer}>
-                    <TouchableOpacity onPress={handleAddToWishList}>
-                        <AntDesign name="heart" size={24} color="black" />
-                    </TouchableOpacity>
-                    <Text style={styles.name}>{product.name}</Text>
-                    <Text style={styles.price}>
-                        ${product.price.toFixed(2)}
-                    </Text>
-                    <Text style={styles.description}>
-                        {product.description}
-                    </Text>
-                </View>
+                    <View style={styles.infoContainer}>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                paddingHorizontal: hp(0.1),
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Text
+                                style={[
+                                    styles.name,
+                                    {
+                                        width: wp(75),
+                                    },
+                                ]}
+                            >
+                                {product.name}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={handleAddToWishList}
+                                style={[
+                                    styles.roundButton,
+                                    { position: 'absolute', right: 0, top: 0 },
+                                ]}
+                            >
+                                <AntDesign
+                                    name="heart"
+                                    size={24}
+                                    color={isInWishList ? 'red' : 'black'}
+                                />
+                            </TouchableOpacity>
+                        </View>
 
-                {/* cart container */}
+                        <View
+                            style={{
+                                paddingVertical: hp(1),
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: hp(2),
+                                marginBottom: hp(1),
+                            }}
+                        >
+                            <View style={styles.soldQuantityContainer}>
+                                <Text style={{ fontFamily: 'mon-med' }}>
+                                    {product.sold_quantity} sold
+                                </Text>
+                            </View>
+                            <View style={styles.reviewsContainer}>
+                                <Rating
+                                    type="star"
+                                    startingValue={Number(
+                                        (product.rating / 5).toFixed(2)
+                                    )}
+                                    readonly={true}
+                                    imageSize={hp(3)}
+                                    ratingCount={1}
+                                />
+                                <Text
+                                    style={{
+                                        fontSize: hp(3),
+                                        fontFamily: 'mon-med',
+                                    }}
+                                >
+                                    {Number(product.rating).toFixed(2)}
+                                </Text>
 
-                <View style={styles.cartBtnContainer}>
+                                <Text style={{ fontFamily: 'mon-reg' }}>
+                                    ({product.total_reviews} reviews)
+                                </Text>
+                            </View>
+                        </View>
+
+                        <Text style={styles.price}>
+                            ${product.price.toFixed(2)}
+                        </Text>
+
+                        <View style={{ paddingVertical: hp(2) }}>
+                            <LineSeparator widthPercentage={100} />
+                        </View>
+
+                        <View style={{ marginTop: hp(4) }}>
+                            <Text
+                                style={{
+                                    fontFamily: 'mon-bold',
+                                    fontSize: hp(2.5),
+                                }}
+                            >
+                                Description
+                            </Text>
+
+                            <Text style={styles.description}>
+                                {product.description}
+                            </Text>
+                        </View>
+
+                        <View style={{ marginTop: hp(4) }}>
+                            <Text
+                                style={{
+                                    fontFamily: 'mon-bold',
+                                    fontSize: hp(2.5),
+                                }}
+                            >
+                                Reviews{' '}
+                                <Text style={{ fontFamily: 'mon-med' }}>
+                                    {' '}
+                                    ({product.total_reviews})
+                                </Text>
+                            </Text>
+
+                            <Reviews
+                                id={Number(id)}
+                                totalReviews={product.total_reviews}
+                            />
+                        </View>
+                    </View>
+                </Animated.ScrollView>
+
+                {/* footer container */}
+
+                <Animated.View style={[styles.footer, rFooter]}>
                     <View
                         style={{
                             flexDirection: 'row',
@@ -228,7 +348,7 @@ const ProductsDetailsScreen = () => {
                         <TouchableOpacity
                             style={styles.roundButton}
                             onPress={() => {
-                                if (quantity > 0) {
+                                if (quantity > 1) {
                                     setQuantity((prev) => prev - 1);
                                 }
                             }}
@@ -253,9 +373,9 @@ const ProductsDetailsScreen = () => {
                     >
                         <Text style={defaultStyles.btnText}>Add to Cart</Text>
                     </TouchableOpacity>
-                </View>
-            </Animated.ScrollView>
-        </SafeAreaView>
+                </Animated.View>
+            </SafeAreaView>
+        </Animated.View>
     );
 };
 
@@ -263,6 +383,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
+        paddingBottom: hp(12),
     },
     image: {
         height: hp(40),
@@ -274,7 +395,7 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 26,
-        fontFamily: 'mon-reg',
+        fontFamily: 'mon-med',
     },
     price: {
         fontSize: 20,
@@ -314,10 +435,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 10,
     },
-    cartBtnContainer: {
+    footer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
+        position: 'absolute',
+
+        width: wp(100),
+        height: hp(12),
+        borderTopColor: Colors.lightGrey,
+        borderTopWidth: 1,
+        bottom: 0,
+        zIndex: 10,
+        backgroundColor: 'white',
     },
 
     textIcon: {
@@ -329,6 +459,20 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         fontFamily: 'mon-bold',
         color: Colors.primary,
+    },
+    soldQuantityContainer: {
+        backgroundColor: Colors.lightGrey,
+        borderRadius: hp(1.1),
+        width: wp(20),
+        height: hp(4),
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    reviewsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: hp(0.7),
     },
 });
 

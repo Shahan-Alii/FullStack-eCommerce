@@ -9,6 +9,7 @@ import {
 } from 'react-native-responsive-screen';
 import useCart from '@/store/cartStore';
 import { Link } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 type CartItem = {
     id: number;
@@ -82,7 +83,16 @@ const CartItemCard = ({ product }: any) => {
 
                     <TouchableOpacity
                         style={styles.removeButton}
-                        onPress={() => removeFromCart(product.id)}
+                        onPress={() => {
+                            removeFromCart(product.id);
+
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Product Removed',
+                                text2: 'Product Removed from Cart Succesfully',
+                                visibilityTime: 2000,
+                            });
+                        }}
                     >
                         <Entypo name="cross" size={24} color="black" />
                     </TouchableOpacity>
@@ -109,8 +119,8 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     image: {
-        width: 60,
-        height: 60,
+        width: 80,
+        height: 80,
         borderRadius: 8,
     },
     infoContainer: {

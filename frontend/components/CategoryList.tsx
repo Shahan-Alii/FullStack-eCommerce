@@ -6,7 +6,11 @@ import {
     StyleSheet,
     TouchableOpacity,
 } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import {
+    FontAwesome5,
+    MaterialCommunityIcons,
+    MaterialIcons,
+} from '@expo/vector-icons';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -27,11 +31,17 @@ const CategoryList = ({ category, changeCategory }: CategoryListProps) => {
         },
         {
             name: 'Shoes',
-            icon: <FontAwesome5 name="shoe-prints" size={24} color="black" />,
+            icon: (
+                <MaterialCommunityIcons
+                    name="shoe-cleat"
+                    size={24}
+                    color="black"
+                />
+            ),
         },
         {
             name: 'Watch',
-            icon: <FontAwesome5 name="clock" size={24} color="black" />,
+            icon: <MaterialIcons name="watch" size={24} color="black" />,
         },
         {
             name: 'Jewellery',
@@ -86,15 +96,15 @@ const styles = StyleSheet.create({
     categoryCard: {
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
+        padding: 4,
         marginRight: 10,
         borderRadius: hp(2),
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.1,
         shadowRadius: 1,
-        elevation: 2,
-        width: wp(27),
+        elevation: 1,
+        width: wp(25),
         height: wp(19),
         backgroundColor: '#f9f9f9',
     },

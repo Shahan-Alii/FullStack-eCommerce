@@ -20,6 +20,7 @@ import {
 } from 'react-native-responsive-screen';
 import { useMutation } from '@tanstack/react-query';
 import createProduct from '@/api/products';
+import Toast from 'react-native-toast-message';
 
 export default function AddProductScreen() {
     const [productName, setProductName] = useState('');
@@ -44,12 +45,23 @@ export default function AddProductScreen() {
         onSuccess: (data) => {
             // console.log('Success', data);
 
-            Alert.alert('Success', 'Profile Updated successfully!');
+            Toast.show({
+                type: 'success',
+                text1: 'Added',
+                text2: 'Your Product has been created',
+                visibilityTime: 2000,
+            });
+
             setIsLoading(0);
         },
         onError: (error) => {
             console.error('Error:', error);
-            Alert.alert('Error', 'Failed to update profile. Please try again.');
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to add product',
+                text2: 'Please Try Again!',
+                visibilityTime: 2000,
+            });
             setIsLoading(0);
         },
     });
