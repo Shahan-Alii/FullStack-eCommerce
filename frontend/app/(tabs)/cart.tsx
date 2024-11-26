@@ -18,6 +18,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
+import Animated, { SequencedTransition } from 'react-native-reanimated';
 
 type CartItem = {
     id: number;
@@ -39,7 +40,7 @@ export default function CartScreen() {
         mutationFn: () => {
             return createOrder(
                 items.map((item: any) => ({
-                    productId: item.id,
+                    product_id: item.id,
                     quantity: item.quantity,
                     price: item.price,
                 }))
@@ -55,6 +56,7 @@ export default function CartScreen() {
             });
 
             console.log('order created successfully');
+            console.log(data);
         },
         onError: (error) => {
             Toast.show({
@@ -76,10 +78,11 @@ export default function CartScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <FlatList
+            <Animated.FlatList
                 data={items}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <CartItemCard product={item} />}
+                contentContainerStyle={{ paddingBottom: hp(20) }}
             />
 
             <View style={styles.footer}>
@@ -94,7 +97,11 @@ export default function CartScreen() {
                             createOrderMutation.mutate();
                         }}
                     >
-                        <Text style={defaultStyles.btnText}>Checkout</Text>
+                        <Text
+                            style={[defaultStyles.btnText, { color: '#fff' }]}
+                        >
+                            Checkout
+                        </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity

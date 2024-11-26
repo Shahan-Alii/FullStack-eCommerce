@@ -9,6 +9,7 @@ import {
     StyleSheet,
     Image,
     ScrollView,
+    Switch,
 } from 'react-native';
 import {
     Ionicons,
@@ -28,6 +29,17 @@ import {
 } from 'react-native-safe-area-context';
 import LineSeparator from '@/components/LineSeparator';
 import { useMutation } from '@tanstack/react-query';
+import { toggleRole } from '@/api/auth';
+import Animated, {
+    FadeIn,
+    FadeInDown,
+    FadeOut,
+    FadeOutUp,
+    FlipInEasyY,
+    FlipOutEasyY,
+    SlideInDown,
+    SlideOutUp,
+} from 'react-native-reanimated';
 
 const OptionItem = ({ icon, text, onPress }: any) => (
     <TouchableOpacity style={styles.optionItem} onPress={onPress}>
@@ -47,17 +59,41 @@ export default function ProfileScreen() {
     const setToken = useAuth((state: any) => state.setToken);
 
     const userData = useAuth((state: any) => state.user);
+    const setUserData = useAuth((state: any) => state.setUser);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isSellerMode, setIsSellerMode] = useState(false);
+    const [isUpdatingRole, setIsUpdatingRole] = useState(false);
     const [image, setImage] = useState(null);
 
     useEffect(() => {
         setIsLoggedIn(!!token);
     }, [token]);
 
+    const roleMutation = useMutation({
+        mutationFn: (newRole: string) => toggleRole(userData.email, newRole),
+        onSuccess: (data) => {
+            console.log('Success', data);
+            // Update isSellerMode based on the new role
+            const updatedRole = isSellerMode ? 'user' : 'seller';
+            setIsSellerMode(updatedRole === 'seller');
+            setUserData({ ...userData, role: updatedRole });
+            setIsUpdatingRole(false);
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+    });
+
     const handleLogout = () => {
         setToken(null);
         setIsLoggedIn(false);
+    };
+
+    const handleSellerModeChange = () => {
+        const newRole = isSellerMode ? 'user' : 'seller';
+        setIsUpdatingRole(true);
+        roleMutation.mutate(newRole);
     };
 
     if (!isLoggedIn) {
@@ -126,28 +162,74 @@ export default function ProfileScreen() {
 
                 {/* Options */}
                 <View style={styles.optionsContainer}>
+                    {/* Seller Mode switch */}
+                    <View style={styles.optionItem}>
+                        <Entypo name="shop" size={24} color="black" />
+                        <Text style={[styles.optionText]}>Seller Mode</Text>
+
+                        <View style={styles.optionArrow}>
+                            <Switch
+                                value={isSellerMode}
+                                onValueChange={handleSellerModeChange}
+                                disabled={isUpdatingRole}
+                            />
+                        </View>
+                    </View>
+
+                    {/* Conditional option for seller */}
                     {userData.role == 'seller' && (
-                        <>
-                            <OptionItem
-                                icon="add-box"
-                                text="Add New Product"
+                        <Animated.View exiting={FlipOutEasyY.duration(500)}>
+                            <TouchableOpacity
+                                style={styles.optionItem}
                                 onPress={() => {
                                     router.push('(modals)/addProduct');
                                 }}
-                            />
-                        </>
+                            >
+                                <MaterialIcons
+                                    name="add-box"
+                                    size={24}
+                                    color="#333"
+                                />
+                                <Text style={styles.optionText}>
+                                    Add a product
+                                </Text>
+
+                                <View style={styles.optionArrow}>
+                                    <Entypo
+                                        name="chevron-right"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </Animated.View>
                     )}
 
+                    {/* Conditional option for user */}
                     {userData.role == 'user' && (
-                        <>
-                            <OptionItem
-                                icon="shopping-bag"
-                                text="My Orders"
+                        <Animated.View exiting={FlipOutEasyY.duration(500)}>
+                            <TouchableOpacity
+                                style={styles.optionItem}
                                 onPress={() => {
                                     router.push('(modals)/myOrders');
                                 }}
-                            />
-                        </>
+                            >
+                                <MaterialIcons
+                                    name="shopping-bag"
+                                    size={24}
+                                    color="#333"
+                                />
+                                <Text style={styles.optionText}>My Orders</Text>
+
+                                <View style={styles.optionArrow}>
+                                    <Entypo
+                                        name="chevron-right"
+                                        size={24}
+                                        color="black"
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </Animated.View>
                     )}
 
                     <OptionItem

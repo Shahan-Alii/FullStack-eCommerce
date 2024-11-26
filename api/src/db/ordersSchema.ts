@@ -15,7 +15,7 @@ export const ordersTable = pgTable('orders', {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     created_at: timestamp().notNull().defaultNow(),
     order_number: varchar(),
-    status: varchar({ length: 50 }).notNull().default('New'),
+    status: varchar({ length: 50 }).notNull().default('Processing'),
     user_id: integer()
         .references(() => usersTable.id)
         .notNull(),

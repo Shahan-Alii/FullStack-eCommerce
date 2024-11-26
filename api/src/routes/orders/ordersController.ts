@@ -45,17 +45,18 @@ export async function listOrders(req: Request, res: Response) {
     try {
         let orders: any = [];
 
-        if (req.role == 'admin') {
+        if (req.role === 'admin') {
             orders = await db.select().from(ordersTable);
-        } else if (req.role == 'seller') {
+        } else {
             orders = await db
                 .select()
                 .from(ordersTable)
-                //@ts-ignore
-                .where(eq(req.userId, ordersTable.userId));
+                .where(eq(ordersTable.user_id, Number(req.userId)));
         }
+
         res.json(orders);
     } catch (error) {
+        console.error('Query Error:', error);
         res.status(500).send(error);
     }
 }

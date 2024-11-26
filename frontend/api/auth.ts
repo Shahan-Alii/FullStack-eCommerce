@@ -56,3 +56,20 @@ export async function editProfile(
 
     return data;
 }
+
+export async function toggleRole(email: string, newRole: string) {
+    const res = await fetch(`${API_URL}/auth/toggleRole`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, newRole }),
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to Change Role');
+    }
+    const data = await res.json();
+
+    return data;
+}

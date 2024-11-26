@@ -9,6 +9,7 @@ import {
 import useWishlist from '@/store/wishListStore'; // Assuming you have a store for the wish list
 import { Link } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import Animated, { FlipOutEasyY } from 'react-native-reanimated';
 
 type WishItem = {
     id: number;
@@ -26,7 +27,10 @@ const WishItemCard = ({ product }: any) => {
     return (
         <Link href={`/products/${product.id}`} asChild>
             <TouchableOpacity>
-                <View style={styles.cardContainer}>
+                <Animated.View
+                    style={styles.cardContainer}
+                    exiting={FlipOutEasyY}
+                >
                     <Image
                         source={{ uri: product.image }}
                         style={styles.image}
@@ -57,7 +61,7 @@ const WishItemCard = ({ product }: any) => {
                     >
                         <Entypo name="cross" size={24} color="black" />
                     </TouchableOpacity>
-                </View>
+                </Animated.View>
             </TouchableOpacity>
         </Link>
     );

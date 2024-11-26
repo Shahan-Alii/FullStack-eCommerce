@@ -21,15 +21,12 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Colors from '@/constants/Colors';
 import Animated, {
-    FadeIn,
-    FadeInLeft,
-    FadeInUp,
-    SlideInDown,
+    FlipInEasyY,
+    FlipOutEasyY,
     interpolate,
-    useAnimatedRef,
     useAnimatedStyle,
-    useScrollViewOffset,
     useSharedValue,
+    withDelay,
     withTiming,
 } from 'react-native-reanimated';
 import {
@@ -51,7 +48,6 @@ const ProductsDetailsScreen = () => {
     const { id } = useLocalSearchParams();
     const navigation = useNavigation();
     const router = useRouter();
-    const queryClient = useQueryClient();
 
     const [quantity, setQuantity] = useState(1);
     const footerTranslateY = useSharedValue(0);
@@ -78,7 +74,10 @@ const ProductsDetailsScreen = () => {
 
     useEffect(() => {
         if (!isLoading) {
-            footerTranslateY.value = withTiming(1, { duration: 900 });
+            footerTranslateY.value = withDelay(
+                400,
+                withTiming(1, { duration: 900 })
+            );
         }
     }, [isLoading]);
 
@@ -205,7 +204,11 @@ const ProductsDetailsScreen = () => {
     };
 
     return (
-        <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)}>
+        <Animated.View
+            style={{ flex: 1 }}
+            entering={FlipInEasyY.duration(500)}
+            exiting={FlipOutEasyY}
+        >
             <SafeAreaView style={styles.container}>
                 <Animated.ScrollView
                     contentContainerStyle={{}}

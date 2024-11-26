@@ -19,6 +19,7 @@
     "burnt": "^0.12.2",
     "cloudinary": "^2.5.1",
     "cloudinary-react-native": "^1.0.0",
+    "date-fns": "^4.1.0",
     "expo": "^52.0.4",
     "expo-blur": "~14.0.1",
     "expo-build-properties": "~0.13.1",

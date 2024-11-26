@@ -10,6 +10,11 @@ import {
 import useCart from '@/store/cartStore';
 import { Link } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import Animated, {
+    CurvedTransition,
+    FlipOutEasyY,
+    JumpingTransition,
+} from 'react-native-reanimated';
 
 type CartItem = {
     id: number;
@@ -28,7 +33,10 @@ const CartItemCard = ({ product }: any) => {
     return (
         <Link href={`/products/${product.id}`} asChild>
             <TouchableOpacity>
-                <View style={styles.cardContainer}>
+                <Animated.View
+                    style={styles.cardContainer}
+                    exiting={FlipOutEasyY}
+                >
                     <Image
                         source={{ uri: product.image }}
                         style={styles.image}
@@ -96,7 +104,7 @@ const CartItemCard = ({ product }: any) => {
                     >
                         <Entypo name="cross" size={24} color="black" />
                     </TouchableOpacity>
-                </View>
+                </Animated.View>
             </TouchableOpacity>
         </Link>
     );

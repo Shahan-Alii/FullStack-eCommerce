@@ -114,7 +114,7 @@ router.post(
 
 router.post('/toggleRole', async (req: Request, res: Response) => {
     try {
-        const { email } = req.body;
+        const { email, newRole } = req.body;
 
         // Validate user existence
         const [user] = await db
@@ -126,9 +126,6 @@ router.post('/toggleRole', async (req: Request, res: Response) => {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-
-        // Toggle the role
-        const newRole = user.role === 'seller' ? 'user' : 'seller';
 
         // Update the role in the database
         await db
